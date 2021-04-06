@@ -6,7 +6,7 @@
 4. [Features](#features)
 
 ## Introduction
-SukiG is a website based on [Blazor WebAssembly](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor) and hosted on [suadin.de](https://suadin.de/) with aim to use it as sandbox to practise full-stack-developer topics outside of restricted job environment.
+[suadin.de](https://suadin.de/) is a website based on [Blazor WebAssembly](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor) with aim to use it as sandbox to practise full-stack-developer topics outside of restricted job environment.
 
 ## Technologies
 * [Blazor WebAssembly](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor): project template, run .NET C# code on client, less server communication
@@ -29,8 +29,8 @@ SukiG is a website based on [Blazor WebAssembly](https://dotnet.microsoft.com/ap
   * expect browser opens with website
 * build & deploy
   * push changes on main branch
-  * expect [suadin.de](https://suadin.de/) contains changes after few minutes 
-  * details behind [here](https://github.com/suadin/Infrastructure)
+  * expect [suadin.de](https://suadin.de/) website contains changes after few minutes automatically
+  * details behind automatism on [suadin/infrastructure](https://github.com/suadin/infrastructure)
 
 ## Features
 * [Chatroom](https://docs.microsoft.com/de-de/azure/azure-signalr/signalr-tutorial-build-blazor-server-chat-app) to chat with other website visitors
