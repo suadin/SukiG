@@ -1,6 +1,5 @@
-﻿<h1>Blazor SignalR Chat Sample</h1>
-<hr />
-
+﻿@if (!Closed)
+{
 @if (!_isChatting)
 {
     <p>
@@ -20,13 +19,15 @@
 else
 {
     // banner to show current user
+<div class="main d-flex align-items-start flex-column bd-highlight mb-3" style="height: 100%">
     <div class="alert alert-secondary mt-4" role="alert">
         <span class="oi oi-person mr-2" aria-hidden="true"></span>
         <span>You are connected as <b>@_username</b></span>
         <button class="btn btn-sm btn-warning ml-md-auto" @onclick="@DisconnectAsync">Disconnect</button>
+        <button class="btn btn-sm btn-error ml-md-auto" @onclick="@CloseAsync">Close</button>
     </div>
     // display messages
-    <div id="scrollbox">
+    <div id="scrollbox" style="height: 80%; width: 100%; overflow: auto;">
         @foreach (var item in _messages)
         {
             @if (item.IsNotice)
@@ -42,19 +43,29 @@ else
             }
         }
         <hr />
-        <textarea class="input-lg" placeholder="enter your comment" @bind="@_newMessage"></textarea>
+    </div>
+    <div class="mt-auto p-2 bd-highlight">
+        <input type="text" @onkeyup="@Enter" @bind="@_newMessage" />
         <button class="btn btn-default" @onclick="@(() => SendAsync(_newMessage))">Send</button>
     </div>
+</div>
+}
 }
 @page "/chatroom"
 @inject NavigationManager navigationManager
 @using Microsoft.AspNetCore.SignalR.Client;
 @code {
     // flag to indicate chat status
-    private bool _isChatting = false;
+    private bool _isChatting = true;
+
+    [Parameter]
+    public bool Closed { get; set; } = false;
+
+    [Parameter]
+    public Action<bool> ClosedChanged { get; set; }
 
     // name of the user who will be chatting
-    private string _username;
+    private string _username = "guest-" + new Random().Next(100000, 999999);
 
     // on-screen message
     private string _message;
@@ -67,6 +78,19 @@ else
 
     private string _hubUrl;
     private HubConnection _hubConnection;
+
+    public ChatRoom()
+    {
+        Chat();
+    }
+
+    public void Enter(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter")
+        {
+            SendAsync(_newMessage);
+        }
+    }
 
     public async Task Chat()
     {
@@ -116,6 +140,12 @@ else
 
         // Inform blazor the UI needs updating
         StateHasChanged();
+    }
+
+    private async Task CloseAsync()
+    {
+        Closed = true;
+        ClosedChanged.Invoke(Closed);
     }
 
     private async Task DisconnectAsync()
