@@ -1,0 +1,17 @@
+﻿:root {
+    /*light theme*/
+    --background: white;
+    --font-color: black;
+    --highlight: #f7f7f7;
+    --highlight-2: #e2e3e5;
+    --link: #0366d6;
+}
+
+.dark-mode {
+    /*dark theme*/
+    --background: #2d2d2d;
+    --font-color: white;
+    --highlight: #393939;
+    --highlight-2: #414648;
+    --link: #3ca4ff;
+}

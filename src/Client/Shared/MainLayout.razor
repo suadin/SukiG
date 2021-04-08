@@ -1,47 +1,41 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page @DarkLightMode()">
-    <div class="main d-flex align-items-start flex-column bd-highlight">
-        <div class="d-flex align-items-center flex-row">
+<div class="page @DarkLightCssClass()">
+    <div class="main d-flex flex-column">
+        <div class="d-flex flex-row flex-gap-4" style="border-bottom-style: dashed; border-bottom-width: 4px; padding-bottom: 2px;">
             <!-- darkmode -->
-            <button class="btn btn-primary p-2" @onclick="@ToggleMode"><span class="oi oi-brush" aria-hidden="true" title="change theme"></span></button>
+            <button title="light/dark mode" class="btn btn-primary" @onclick="@ToggleMode"><span class="oi oi-brush"></span></button>
             <!-- chatroom -->
-            <button class="btn btn-primary ml-auto p-2" @onclick="@ShowChat"><span class="oi oi-chat" aria-hidden="true" title="show chat"></span></button>
+            <button title="open/close chat" class="btn btn-primary" @onclick="@ToggleChat"><span class="oi oi-chat"></span></button>
         </div>
-        <div class="content px-4 p-2 bd-highlight" style="width: 100%">
+        <div class="content p-2 flex-fill">
             @Body
         </div>
-        @if (position == ChatPosition.Footer) {
-            <div class="chatroom-root chatroom-footer">
-                <SukiG.Client.Pages.ChatRoom @ref="chatRoom" @bind-Position="@position"></SukiG.Client.Pages.ChatRoom>
+        <!-- chatroom -->
+        @if (!isClosed)
+        {
+            <div class="chatroom-footer d-flex flex-column flex-gap-6 align-items-stretch">
+                <ChatRoom @ref="chatRoom" @bind-IsClosed="@isClosed"></ChatRoom>
             </div>
         }
     </div>
-    <!-- chatroom -->
-    @if (position == ChatPosition.Side)
-    {
-        <div class="chatroom-root">
-            <SukiG.Client.Pages.ChatRoom @ref="chatRoom" @bind-Position="@position"></SukiG.Client.Pages.ChatRoom>
-        </div>
-    }
 </div>
 
 @using SukiG.Client.Pages;
-@using SukiG.Client.Model;
 @code {
     // chatroom
     private ChatRoom chatRoom = new ChatRoom();
-    private ChatPosition position = ChatPosition.Side;
-    private void ShowChat() => position = ChatPosition.Side;
-    protected override async Task OnAfterRenderAsync(bool firstRender) => chatRoom.PositionChanged += ChildFiredEvent;
-    public void ChildFiredEvent(ChatPosition position)
+    private bool isClosed;
+    private void ToggleChat() => isClosed = !isClosed;
+    protected override async Task OnAfterRenderAsync(bool firstRender) => chatRoom.IsClosedChanged += ChildFiredEvent;
+    public void ChildFiredEvent(bool isClosed)
     {
-        this.position = position;
+        this.isClosed = isClosed;
         StateHasChanged();
     }
 
     // darkmode
     private bool isDarkMode = false;
-    private string DarkLightMode() => isDarkMode? "dark-mode" : string.Empty;
+    private string DarkLightCssClass() => isDarkMode? "dark-mode" : string.Empty;
     private void ToggleMode() => isDarkMode = !isDarkMode;
 }

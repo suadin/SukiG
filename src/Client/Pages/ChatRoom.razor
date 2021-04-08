@@ -1,73 +1,44 @@
 ﻿@page "/chatroom"
 <div class="chatroom-component d-flex align-items-start flex-column">
-    @if (!isLoggedIn)
-    {
-        <!-- login -->
-        <div class="chatroom-login">
-            <p>Enter your name to start chatting:</p>
-            <input type="text" maxlength="12" @bind="@userName" />
-            <button type="button" @onclick="@Login"><span class="oi oi-chat" aria-hidden="true" title="login"></span></button>
-            @if (string.IsNullOrWhiteSpace(errorMessage))
+    <!-- chat -->
+    <div class="chatroom-messages d-flex flex-column align-items-start p-2 flex-fill">
+        @foreach (var item in chatMessages)
+        {
+            @if (item.IsNotice)
             {
-                <div class="invalid-feedback">@errorMessage</div>
-                <small id="emailHelp" class="form-text text-muted">@errorMessage</small>
+                <div class="alert alert-info">@item.Body</div>
             }
-        </div>
-    }
-    else
-    {
-        <!-- chat -->
-        <div class="chatroom-box d-flex flex-row justify-content-sm-around align-items-center">
-            <span class="oi oi-person" aria-hidden="true"></span>
-            <span><b>@userName</b></span>
-            @if (Position != ChatPosition.Footer) {<button class="btn btn-primary btn-sm" @onclick="@MoveChatToFooter" title="move chat to footer"><span class="oi oi-arrow-circle-bottom" aria-hidden="true"></span></button> }
-            @if (Position != ChatPosition.Side) {<button class="btn btn-primary btn-sm" @onclick="@MoveChatToSide" title="move chat to side"><span class="oi oi-arrow-circle-right" aria-hidden="true"></span></button> }
-            @if (Position != ChatPosition.Hide) {<button class="btn btn-primary btn-sm" @onclick="@HideChat" title="hide chat"><span class="oi oi-x" aria-hidden="true"></span></button> }
-        </div>
-        <div class="chatroom-messages d-flex align-items-start flex-column">
-            @foreach (var item in chatMessages)
+            else
             {
-                @if (item.IsNotice)
-                {
-                    <div class="alert alert-info">@item.Body</div>
-                }
-                else
-                {
-                    <div>
-                        <div class="user">@item.Username</div>
-                        <div class="msg">@item.Body</div>
-                    </div>
-                }
+                <div>
+                    <span class="user"><strong>@item.Username</strong></span>
+                    <span><strong>:&nbsp;</strong></span>
+                    <span class="msg">@item.Body</span>
+                </div>
             }
-            <div id="chat-end"></div>
-        </div>
-        <div class="chatroom-input d-flex flex-column mt-auto">
-            <input class="chatroom-textbox" type="text" placeholder="enter text to write message" @onkeyup="@EnterAsync" @bind="@newMessage" />
-        </div>
-    }
+        }
+        <div id="chat-end"></div>
+    </div>
+    <div class="chatroom-input d-flex flex-column mt-auto flex-gap-6">
+        <input class="chatroom-textbox" type="text" placeholder="enter text to write message" @onkeyup="@EnterAsync" @bind="@newMessage" />
+    </div>
 </div>
 
 @using Microsoft.AspNetCore.SignalR.Client;
-@using SukiG.Client.Model;
-@inject NavigationManager navigationManager
-@inject IJSRuntime jsRuntime
+@inject NavigationManager navigationManager;
+@inject IJSRuntime jsRuntime;
 @code {
     // login
-    private bool isLoggedIn = true;
-    private string errorMessage = string.Empty;
-    private string userName = "guest-" + new Random().Next(100000, 999999);
+    private string userName = "Guest-" + new Random().Next(100000, 999999);
     private HubConnection hubConnection;
     public ChatRoom() => Login();
     public async Task Login()
     {
         if (string.IsNullOrWhiteSpace(userName))
-        {
-            errorMessage = "Please enter a name";
             return;
-        }
+
         try
         {
-            isLoggedIn = true;
             await Task.Delay(1);
             chatMessages.Clear();
             hubConnection = new HubConnectionBuilder().WithUrl(navigationManager.BaseUri.TrimEnd('/') + "/chat").Build();
@@ -77,8 +48,19 @@
         }
         catch (Exception e)
         {
-            errorMessage = $"ERROR: Failed to start chat client: {e.Message}";
-            isLoggedIn = false;
+            await SendAsync($"[Error] {userName} cannot joined chat room.");
+        }
+    }
+
+    //logout
+    private async Task Logout()
+    {
+        if (hubConnection != null && hubConnection.State == HubConnectionState.Connected)
+        {
+            await SendAsync($"[Notice] {userName} left chat room.");
+            await hubConnection.StopAsync();
+            await hubConnection.DisposeAsync();
+            hubConnection = null;
         }
     }
 
@@ -94,7 +76,7 @@
     }
     private async Task SendAsync(string message)
     {
-        if (isLoggedIn && !string.IsNullOrWhiteSpace(message))
+        if (!string.IsNullOrWhiteSpace(message))
         {
             await hubConnection.SendAsync("Broadcast", userName, message);
             newMessage = string.Empty;
@@ -123,30 +105,11 @@
     protected override async Task OnAfterRenderAsync(bool firstRender) => await jsRuntime.InvokeVoidAsync("scrollToFragment", "chat-end");
 
     // chat-position
-    [Parameter] public ChatPosition Position { get; set; } = ChatPosition.Side;
-    [Parameter] public Action<ChatPosition> PositionChanged { get; set; }
-    private void MoveChatToFooter()
+    [Parameter] public bool IsClosed { get; set; } = false;
+    [Parameter] public Action<bool> IsClosedChanged { get; set; }
+    private void Close()
     {
-        // TODO: use for later
-        //if (isLoggedIn)
-        //{
-        //    await SendAsync($"[Notice] {userName} left chat room.");
-        //    await hubConnection.StopAsync();
-        //    await hubConnection.DisposeAsync();
-        //    hubConnection = null;
-        //    isLoggedIn = false;
-        //}
-        Position = ChatPosition.Footer;
-        PositionChanged.Invoke(Position);
-    }
-    private void MoveChatToSide()
-    {
-        Position = ChatPosition.Side;
-        PositionChanged.Invoke(Position);
-    }
-    private void HideChat()
-    {
-        Position = ChatPosition.Hide;
-        PositionChanged.Invoke(Position);
+        IsClosed = true;
+        IsClosedChanged.Invoke(IsClosed);
     }
 }

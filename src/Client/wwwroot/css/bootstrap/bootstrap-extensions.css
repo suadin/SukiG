@@ -1,0 +1,11 @@
+﻿.flex-gap-2 > * {
+    margin: 2px;
+}
+
+.flex-gap-4 > * {
+    margin: 4px;
+}
+
+.flex-gap-6 > * {
+    margin: 6px;
+}
