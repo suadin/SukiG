@@ -1,7 +1,4 @@
 ﻿@page "/chatroom"
-@inject NavigationManager navigationManager
-@using Microsoft.AspNetCore.SignalR.Client;
-
 <div class="chatroom-component d-flex align-items-start flex-column">
     @if (!isLoggedIn)
     {
@@ -41,6 +38,7 @@
                     </div>
                 }
             }
+            <div id="chat-end"></div>
         </div>
         <div class="chatroom-input d-flex flex-column mt-auto">
             <input class="chatroom-textbox" type="text" placeholder="enter text to write message" @onkeyup="@EnterAsync" @bind="@newMessage" />
@@ -48,6 +46,9 @@
     }
 </div>
 
+@using Microsoft.AspNetCore.SignalR.Client;
+@inject NavigationManager navigationManager
+@inject IJSRuntime jsRuntime
 @code {
     // login
     private bool isLoggedIn = true;
@@ -117,6 +118,7 @@
         public bool IsNotice => Body.StartsWith("[Notice]");
         public string CSS => Mine ? "sent" : "received";
     }
+    protected override async Task OnAfterRenderAsync(bool firstRender) => await jsRuntime.InvokeVoidAsync("scrollToFragment", "chat-end");
 
     // disconnect
     private async Task DisconnectAsync()
