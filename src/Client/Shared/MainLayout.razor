@@ -26,7 +26,10 @@
     // chatroom
     private ChatRoom chatRoom = new ChatRoom();
     private bool isClosed;
-    private void ToggleChat() => isClosed = !isClosed;
+    private async Task ToggleChat() {
+        isClosed = !isClosed;
+        if (isClosed) await chatRoom.Logout();
+    }
     protected override async Task OnAfterRenderAsync(bool firstRender) => chatRoom.IsClosedChanged += ChildFiredEvent;
     public void ChildFiredEvent(bool isClosed)
     {

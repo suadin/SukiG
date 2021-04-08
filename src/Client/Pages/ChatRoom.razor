@@ -29,16 +29,14 @@
 @inject IJSRuntime jsRuntime;
 @code {
     // login
-    private string userName = "Guest-" + new Random().Next(100000, 999999);
+    private string userName;
     private HubConnection hubConnection;
     public ChatRoom() => Login();
     public async Task Login()
     {
-        if (string.IsNullOrWhiteSpace(userName))
-            return;
-
         try
         {
+            userName = "Guest-" + new Random().Next(100000, 999999);
             await Task.Delay(1);
             chatMessages.Clear();
             hubConnection = new HubConnectionBuilder().WithUrl(navigationManager.BaseUri.TrimEnd('/') + "/chat").Build();
@@ -53,7 +51,7 @@
     }
 
     //logout
-    private async Task Logout()
+    public async Task Logout()
     {
         if (hubConnection != null && hubConnection.State == HubConnectionState.Connected)
         {
