@@ -20,8 +20,9 @@
         <div class="chatroom-box d-flex flex-row justify-content-sm-around align-items-center">
             <span class="oi oi-person" aria-hidden="true"></span>
             <span><b>@userName</b></span>
-            <button class="btn btn-primary btn-sm" @onclick="@DisconnectAsync" title="disconnect"><span class="oi oi-account-logout" aria-hidden="true"></span></button>
-            <button class="btn btn-primary btn-sm" @onclick="@CloseAsync" title="close"><span class="oi oi-x" aria-hidden="true"></span></button>
+            @if (Position != ChatPosition.Footer) {<button class="btn btn-primary btn-sm" @onclick="@MoveChatToFooter" title="move chat to footer"><span class="oi oi-arrow-circle-bottom" aria-hidden="true"></span></button> }
+            @if (Position != ChatPosition.Side) {<button class="btn btn-primary btn-sm" @onclick="@MoveChatToSide" title="move chat to side"><span class="oi oi-arrow-circle-right" aria-hidden="true"></span></button> }
+            @if (Position != ChatPosition.Hide) {<button class="btn btn-primary btn-sm" @onclick="@HideChat" title="hide chat"><span class="oi oi-x" aria-hidden="true"></span></button> }
         </div>
         <div class="chatroom-messages d-flex align-items-start flex-column">
             @foreach (var item in chatMessages)
@@ -47,6 +48,7 @@
 </div>
 
 @using Microsoft.AspNetCore.SignalR.Client;
+@using SukiG.Client.Model;
 @inject NavigationManager navigationManager
 @inject IJSRuntime jsRuntime
 @code {
@@ -120,25 +122,31 @@
     }
     protected override async Task OnAfterRenderAsync(bool firstRender) => await jsRuntime.InvokeVoidAsync("scrollToFragment", "chat-end");
 
-    // disconnect
-    private async Task DisconnectAsync()
+    // chat-position
+    [Parameter] public ChatPosition Position { get; set; } = ChatPosition.Side;
+    [Parameter] public Action<ChatPosition> PositionChanged { get; set; }
+    private void MoveChatToFooter()
     {
-        if (isLoggedIn)
-        {
-            await SendAsync($"[Notice] {userName} left chat room.");
-            await hubConnection.StopAsync();
-            await hubConnection.DisposeAsync();
-            hubConnection = null;
-            isLoggedIn = false;
-        }
+        // TODO: use for later
+        //if (isLoggedIn)
+        //{
+        //    await SendAsync($"[Notice] {userName} left chat room.");
+        //    await hubConnection.StopAsync();
+        //    await hubConnection.DisposeAsync();
+        //    hubConnection = null;
+        //    isLoggedIn = false;
+        //}
+        Position = ChatPosition.Footer;
+        PositionChanged.Invoke(Position);
     }
-
-    // close
-    [Parameter] public bool Closed { get; set; } = false;
-    [Parameter] public Action<bool> ClosedChanged { get; set; }
-    private async Task CloseAsync()
+    private void MoveChatToSide()
     {
-        Closed = true;
-        ClosedChanged.Invoke(Closed);
+        Position = ChatPosition.Side;
+        PositionChanged.Invoke(Position);
+    }
+    private void HideChat()
+    {
+        Position = ChatPosition.Hide;
+        PositionChanged.Invoke(Position);
     }
 }

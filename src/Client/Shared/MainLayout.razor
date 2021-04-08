@@ -1,39 +1,42 @@
 ﻿@inherits LayoutComponentBase
 
 <div class="page @DarkLightMode()">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-    <div class="main d-flex align-items-start flex-column bd-highlight" style="height: 100vh">
-        <div class="p-4 bd-highlight">
+    <div class="main d-flex align-items-start flex-column bd-highlight">
+        <div class="d-flex align-items-center flex-row">
             <!-- darkmode -->
-            <button class="btn btn-primary" @onclick="@ToggleMode"><span class="oi oi-brush" aria-hidden="true" title="change theme"></span></button>
+            <button class="btn btn-primary p-2" @onclick="@ToggleMode"><span class="oi oi-brush" aria-hidden="true" title="change theme"></span></button>
             <!-- chatroom -->
-            <button class="btn btn-primary" @onclick="@OpenChat"><span class="oi oi-chat" aria-hidden="true" title="open chat"></span></button>
+            <button class="btn btn-primary ml-auto p-2" @onclick="@ShowChat"><span class="oi oi-chat" aria-hidden="true" title="show chat"></span></button>
         </div>
         <div class="content px-4 p-2 bd-highlight" style="width: 100%">
             @Body
         </div>
+        @if (position == ChatPosition.Footer) {
+            <div class="chatroom-root chatroom-footer">
+                <SukiG.Client.Pages.ChatRoom @ref="chatRoom" @bind-Position="@position"></SukiG.Client.Pages.ChatRoom>
+            </div>
+        }
     </div>
     <!-- chatroom -->
-    @if (!isChatClosed)
+    @if (position == ChatPosition.Side)
     {
-        <div style="width: 250px; height: 100vh;">
-            <SukiG.Client.Pages.ChatRoom @ref="chatRoom" @bind-Closed="@isChatClosed"></SukiG.Client.Pages.ChatRoom>
+        <div class="chatroom-root">
+            <SukiG.Client.Pages.ChatRoom @ref="chatRoom" @bind-Position="@position"></SukiG.Client.Pages.ChatRoom>
         </div>
     }
 </div>
 
 @using SukiG.Client.Pages;
+@using SukiG.Client.Model;
 @code {
     // chatroom
     private ChatRoom chatRoom = new ChatRoom();
-    private bool isChatClosed = false;
-    private void OpenChat() => isChatClosed = false;
-    protected override async Task OnAfterRenderAsync(bool firstRender) => chatRoom.ClosedChanged += ChildFiredEvent;
-    public void ChildFiredEvent(bool closed)
+    private ChatPosition position = ChatPosition.Side;
+    private void ShowChat() => position = ChatPosition.Side;
+    protected override async Task OnAfterRenderAsync(bool firstRender) => chatRoom.PositionChanged += ChildFiredEvent;
+    public void ChildFiredEvent(ChatPosition position)
     {
-        isChatClosed = closed;
+        this.position = position;
         StateHasChanged();
     }
 

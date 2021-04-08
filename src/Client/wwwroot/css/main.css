@@ -2,10 +2,7 @@
     position: relative;
     display: flex;
     flex-direction: column;
-}
-
-.main {
-    flex: 1;
+    height: 100vh;
 }
 
 .sidebar {
@@ -32,6 +29,10 @@
     }
 
 @media (max-width: 640.98px) {
+    .main {
+        height: 68vh;
+    }
+
     .top-row:not(.auth) {
         display: none;
     }
@@ -46,6 +47,12 @@
 }
 
 @media (min-width: 641px) {
+
+    .main {
+        height: 100vh;
+        flex: 1;
+    }
+
     .page {
         flex-direction: row;
     }
