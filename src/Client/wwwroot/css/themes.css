@@ -1,17 +1,35 @@
 ﻿:root {
     /*light theme*/
-    --background: white;
-    --font-color: black;
-    --highlight: #f7f7f7;
-    --highlight-2: #e2e3e5;
-    --link: #0366d6;
+    --background-color: white;
+    --foreground-color: black;
+    --link-color: blue;
 }
 
 .dark-mode {
     /*dark theme*/
-    --background: #2d2d2d;
-    --font-color: white;
-    --highlight: #393939;
-    --highlight-2: #414648;
-    --link: #3ca4ff;
+    --background-color: #2d2d2d;
+    --foreground-color: white;
+    --link-color: lightblue;
+}
+
+div, input, p, h1, h2 {
+    background-color: var(--background-color);
+    border-color: var(--foreground-color);
+    color: var(--foreground-color);
+}
+
+a, a:hover, a:after, a:active {
+    color: var(--link-color);
+}
+
+.btn {
+    background-color: var(--background-color);
+    color: var(--foreground-color);
+    border-color: var(--foreground-color);
+}
+
+.btn:hover {
+    background-color: var(--background-color);
+    color: var(--foreground-color);
+    border-color: var(--foreground-color);
 }

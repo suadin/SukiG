@@ -1,28 +1,29 @@
-﻿@page "/chatroom"
-<div class="chatroom-component d-flex align-items-start flex-column">
-    <!-- chat -->
-    <div class="chatroom-messages d-flex flex-column align-items-start p-2 flex-fill">
-        @foreach (var item in chatMessages)
-        {
-            @if (item.IsNotice)
+﻿@if (!isClosed)
+{
+    <div class="chatroom-component d-flex flex-column flex-gap-6 align-items-stretch">
+        <div class="chatroom-messages d-flex flex-column align-items-start p-2 flex-fill">
+            @foreach (var item in chatMessages)
             {
-                <div class="alert alert-info">@item.Body</div>
+                @if (item.IsNotice)
+                {
+                    <div class="alert alert-info">@item.Body</div>
+                }
+                else
+                {
+                    <div>
+                        <span class="user"><strong>@item.Username</strong></span>
+                        <span><strong>:&nbsp;</strong></span>
+                        <span class="msg">@item.Body</span>
+                    </div>
+                }
             }
-            else
-            {
-                <div>
-                    <span class="user"><strong>@item.Username</strong></span>
-                    <span><strong>:&nbsp;</strong></span>
-                    <span class="msg">@item.Body</span>
-                </div>
-            }
-        }
-        <div id="chat-end"></div>
+            <div id="chat-end"></div>
+        </div>
+        <div class="chatroom-input d-flex flex-column mt-auto flex-gap-6">
+            <input class="chatroom-textbox" type="text" placeholder="enter text to write message" @onkeyup="@EnterAsync" @bind="@newMessage" />
+        </div>
     </div>
-    <div class="chatroom-input d-flex flex-column mt-auto flex-gap-6">
-        <input class="chatroom-textbox" type="text" placeholder="enter text to write message" @onkeyup="@EnterAsync" @bind="@newMessage" />
-    </div>
-</div>
+}
 
 @using Microsoft.AspNetCore.SignalR.Client;
 @inject NavigationManager navigationManager;
@@ -31,7 +32,7 @@
     // login
     private string userName;
     private HubConnection hubConnection;
-    public ChatRoom() => Login();
+    protected override async Task OnInitializedAsync() => await Login();
     public async Task Login()
     {
         try
@@ -39,12 +40,12 @@
             userName = "Guest-" + new Random().Next(100000, 999999);
             await Task.Delay(1);
             chatMessages.Clear();
-            hubConnection = new HubConnectionBuilder().WithUrl(navigationManager.BaseUri.TrimEnd('/') + "/chat").Build();
+            hubConnection = new HubConnectionBuilder().WithUrl(navigationManager.BaseUri.TrimEnd('/') + "/chatroom").Build();
             hubConnection.On<string, string>("Broadcast", BroadcastMessage);
             await hubConnection.StartAsync();
             await SendAsync($"[Notice] {userName} joined chat room.");
         }
-        catch (Exception e)
+        catch (Exception)
         {
             await SendAsync($"[Error] {userName} cannot joined chat room.");
         }
@@ -102,12 +103,15 @@
     }
     protected override async Task OnAfterRenderAsync(bool firstRender) => await jsRuntime.InvokeVoidAsync("scrollToFragment", "chat-end");
 
-    // chat-position
-    [Parameter] public bool IsClosed { get; set; } = false;
-    [Parameter] public Action<bool> IsClosedChanged { get; set; }
-    private void Close()
+    // control
+    private bool isClosed = false;
+    public async Task ToggleChat()
     {
-        IsClosed = true;
-        IsClosedChanged.Invoke(IsClosed);
+        isClosed = !isClosed;
+        if (isClosed)
+            await Logout();
+        else
+            await Login();
+        StateHasChanged();
     }
 }

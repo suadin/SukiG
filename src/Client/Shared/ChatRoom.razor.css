@@ -1,0 +1,29 @@
+
+.chatroom-component {
+    height: 300px;
+    border-width: 4px;
+    border-style: dashed;
+    border-radius: 20px;
+    box-shadow: none;
+    margin-bottom: 10px;
+}
+
+.chatroom-messages {
+    height: 99%;
+    width: 99%;
+    overflow-x: hidden;
+}
+
+.chatroom-input {
+    border-style: none;
+    width: 99%;
+    border-top-style: dashed;
+    border-top-width: 4px;
+    padding-top: 5px;
+}
+
+.chatroom-textbox {
+    padding-left: 5px;
+    padding-right: 5px;
+    border-style: none;
+}

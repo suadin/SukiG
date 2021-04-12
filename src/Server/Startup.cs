@@ -46,7 +46,7 @@ namespace SukiG.Server
                 endpoints.MapRazorPages();
                 endpoints.MapControllers();
                 endpoints.MapFallbackToFile("index.html");
-                endpoints.MapHub<ChatHub>(ChatHub.HubUrl);
+                endpoints.MapHub<ChatRoomHub>(ChatRoomHub.HubUrl);
             });
         }
     }

@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 
 namespace SukiG.Server.Hubs
 {
-    public class ChatHub : Hub
+    public class ChatRoomHub : Hub
     {
-        public const string HubUrl = "/chat";
+        public const string HubUrl = "/chatroom";
 
         public async Task Broadcast(string username, string message)
         {

@@ -4,38 +4,6 @@ html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-a, .btn-link {
-    color: var(--link);
-}
-
-alert-secondary {
-    background-color: var(--highlight-2);
-    color: var(--font-color);
-}
-
-.table {
-    color: var(--font-color);
-}
-
-div.main {
-    background-color: var(--background);
-    color: var(--font-color);
-}
-
-a, .btn-link {
-    color: var(--link);
-}
-
-.btn-primary {
-    color: var(--font-color);
-    background-color: var(--background);
-    border-color: var(--font-color);
-}
-
-.btn, .btn:hover {
-    color: var(--font-color);
-}
-
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
 }
@@ -65,4 +33,11 @@ a, .btn-link {
     position: absolute;
     right: 0.75rem;
     top: 0.5rem;
+}
+
+@media (min-width: 641px) {
+    .main > * {
+        margin-left: 2rem !important;
+        margin-right: 1.5rem !important;
+    }
 }

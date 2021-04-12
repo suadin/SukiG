@@ -1,44 +1,24 @@
 ﻿@inherits LayoutComponentBase
-
 <div class="page @DarkLightCssClass()">
     <div class="main d-flex flex-column">
         <div class="d-flex flex-row flex-gap-4" style="border-bottom-style: dashed; border-bottom-width: 4px; padding-bottom: 2px;">
-            <!-- darkmode -->
+            <!-- dark-mode control -->
             <button title="light/dark mode" class="btn btn-primary" @onclick="@ToggleMode"><span class="oi oi-brush"></span></button>
-            <!-- chatroom -->
+            <!-- chatroom control -->
             <button title="open/close chat" class="btn btn-primary" @onclick="@ToggleChat"><span class="oi oi-chat"></span></button>
         </div>
-        <div class="content p-2 flex-fill">
-            @Body
-        </div>
-        <!-- chatroom -->
-        @if (!isClosed)
-        {
-            <div class="chatroom-footer d-flex flex-column flex-gap-6 align-items-stretch">
-                <ChatRoom @ref="chatRoom" @bind-IsClosed="@isClosed"></ChatRoom>
-            </div>
-        }
+        <div class="content p-2 flex-fill">@Body</div>
+        <ChatRoom @ref="chatRoom"></ChatRoom>
     </div>
 </div>
 
-@using SukiG.Client.Pages;
 @code {
+    // dark-mode
+    private bool isDarkMode = false;
+    private string DarkLightCssClass() => isDarkMode ? "dark-mode" : string.Empty;
+    private void ToggleMode() => isDarkMode = !isDarkMode;
+
     // chatroom
     private ChatRoom chatRoom = new ChatRoom();
-    private bool isClosed;
-    private async Task ToggleChat() {
-        isClosed = !isClosed;
-        if (isClosed) await chatRoom.Logout();
-    }
-    protected override async Task OnAfterRenderAsync(bool firstRender) => chatRoom.IsClosedChanged += ChildFiredEvent;
-    public void ChildFiredEvent(bool isClosed)
-    {
-        this.isClosed = isClosed;
-        StateHasChanged();
-    }
-
-    // darkmode
-    private bool isDarkMode = false;
-    private string DarkLightCssClass() => isDarkMode? "dark-mode" : string.Empty;
-    private void ToggleMode() => isDarkMode = !isDarkMode;
+    private async Task ToggleChat() => await chatRoom.ToggleChat();
 }
