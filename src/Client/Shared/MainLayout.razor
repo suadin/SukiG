@@ -12,13 +12,76 @@
     </div>
 </div>
 
+@using SukiG.Shared.ChatCommand;
 @code {
+    // init
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            chatRoom.AddCommandFuncs(new[]{
+                new ChatCommandFunc(DarkModeFunc, "darkmode"),
+                new ChatCommandFunc(LightModeFunc, "lightmode"),
+                new ChatCommandFunc(CloseFunc, "close"),
+                new ChatCommandFunc(RenameFunc, "rename <newUserName>"),
+                new ChatCommandFunc(UserListFunc, "list")
+            });
+        }
+    }
+
     // dark-mode
     private bool isDarkMode = false;
     private string DarkLightCssClass() => isDarkMode ? "dark-mode" : string.Empty;
     private void ToggleMode() => isDarkMode = !isDarkMode;
+    private ChatCommandResult DarkModeFunc(string[] commandParams)
+    {
+        if (commandParams.Length == 1 && commandParams[0] == "darkmode")
+        {
+            isDarkMode = true;
+            StateHasChanged();
+            return ChatCommandResult.Executed;
+        }
+        return ChatCommandResult.Ignored;
+    }
+    private ChatCommandResult LightModeFunc(string[] commandParams)
+    {
+        if (commandParams.Length == 1 && commandParams[0] == "lightmode")
+        {
+            isDarkMode = false;
+            StateHasChanged();
+            return ChatCommandResult.Executed;
+        }
+        return ChatCommandResult.Ignored;
+    }
 
     // chatroom
     private ChatRoom chatRoom = new ChatRoom();
     private async Task ToggleChat() => await chatRoom.ToggleChat();
+    private ChatCommandResult CloseFunc(string[] commandParams)
+    {
+        if (commandParams.Length == 1 && commandParams[0] == "close")
+        {
+            ToggleChat();
+            return ChatCommandResult.Executed;
+        }
+        return ChatCommandResult.Ignored;
+    }
+    private ChatCommandResult RenameFunc(string[] commandParams)
+    {
+        if (commandParams.Length == 2 && commandParams[0] == "rename")
+        {
+            chatRoom.Rename(commandParams[1]);
+            return ChatCommandResult.Executed;
+        }
+        return ChatCommandResult.Ignored;
+    }
+    private ChatCommandResult UserListFunc(string[] commandParams)
+    {
+        if (commandParams.Length == 1 && commandParams[0] == "list")
+        {
+            chatRoom.List();
+            return ChatCommandResult.Executed;
+        }
+        return ChatCommandResult.Ignored;
+    }
 }

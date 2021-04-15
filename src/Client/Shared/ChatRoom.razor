@@ -25,24 +25,55 @@
     </div>
 }
 
+@using SukiG.Shared.ChatCommand;
 @using Microsoft.AspNetCore.SignalR.Client;
 @inject NavigationManager navigationManager;
 @inject IJSRuntime jsRuntime;
 @code {
+    // init
+    protected override async Task OnInitializedAsync() => await Login();
+    protected override async Task OnAfterRenderAsync(bool firstRender) {
+        if (!firstRender)
+        {
+            await jsRuntime.InvokeVoidAsync("scrollToFragment", "chat-end");
+        }
+    }
+
+    // commands
+    private ChatCommandHandler commandHandler;
+    private IEnumerable<ChatCommandFunc> commandFuncs;
+    private string helpCommandPattern = "help";
+    private ChatCommandResult helpCommandFunc(string[] commandParameter)
+    {
+        if(commandParameter.Length == 1 && commandParameter[0] == "help")
+        {
+            var helpMessage = string.Join(" | ", commandFuncs.Select(c => c.CommandPattern));
+            chatMessages.Add(new Message("suadin.de", $"[Notice] {helpMessage}", false));
+            return ChatCommandResult.Executed;
+        }
+
+        return ChatCommandResult.Ignored;
+    }
+    public void AddCommandFuncs(IEnumerable<ChatCommandFunc> newCommandFuncs)
+    {
+        commandFuncs = new[] { new ChatCommandFunc(helpCommandFunc, helpCommandPattern) }.Concat(newCommandFuncs);
+        commandHandler = new ChatCommandHandler(commandFuncs);
+    }
+
     // login
     private string userName;
     private HubConnection hubConnection;
-    protected override async Task OnInitializedAsync() => await Login();
     public async Task Login()
     {
         try
         {
-            userName = "Guest-" + new Random().Next(100000, 999999);
             await Task.Delay(1);
             chatMessages.Clear();
             hubConnection = new HubConnectionBuilder().WithUrl(navigationManager.BaseUri.TrimEnd('/') + "/chatroom").Build();
             hubConnection.On<string, string>("Broadcast", BroadcastMessage);
+            hubConnection.On<IList<string>>("UserList", UserListMessage);
             await hubConnection.StartAsync();
+            await Rename("Guest-" + new Random().Next(100000, 999999), true);
             await SendAsync($"[Notice] {userName} joined chat room.");
         }
         catch (Exception)
@@ -77,9 +108,22 @@
     {
         if (!string.IsNullOrWhiteSpace(message))
         {
-            await hubConnection.SendAsync("Broadcast", userName, message);
-            newMessage = string.Empty;
+            var commandResult = commandHandler == null ? ChatCommandResult.Ignored : (await commandHandler?.Handle(message));
+            switch (commandResult)
+            {
+                case ChatCommandResult.Ignored:
+                    await hubConnection.SendAsync("Broadcast", userName, message);
+                    break;
+                case ChatCommandResult.Executed:
+                    // command function handles output
+                    break;
+                case ChatCommandResult.Failed:
+                    chatMessages.Add(new Message("suadin.de", $"[Error] command '{message}' failed! Use '/help' to list commands", false));
+                    break;
+            }
         }
+
+        newMessage = string.Empty;
     }
     private void BroadcastMessage(string name, string message)
     {
@@ -98,12 +142,11 @@
         public string Username { get; set; }
         public string Body { get; set; }
         public bool Mine { get; set; }
-        public bool IsNotice => Body.StartsWith("[Notice]");
+        public bool IsNotice => Body.StartsWith("[Notice]") || Body.StartsWith("[Error]");
         public string CSS => Mine ? "sent" : "received";
     }
-    protected override async Task OnAfterRenderAsync(bool firstRender) => await jsRuntime.InvokeVoidAsync("scrollToFragment", "chat-end");
 
-    // control
+    // open/close
     private bool isClosed = false;
     public async Task ToggleChat()
     {
@@ -112,6 +155,26 @@
             await Logout();
         else
             await Login();
+        StateHasChanged();
+    }
+
+    // rename
+    public async Task Rename(string newUserName, bool isFirstTime = false)
+    {
+        userName = newUserName;
+        await hubConnection.SendAsync("Rename", newUserName);
+        if (!isFirstTime)
+        {
+            chatMessages.Add(new Message("suadin.de", $"[Notice] you are renamed to '{newUserName}'", false));
+            StateHasChanged();
+        }
+    }
+
+    // userlist
+    public async Task List() => await hubConnection.SendAsync("UserList");
+    private void UserListMessage(IList<string> userList)
+    {
+        chatMessages.Add(new Message("", $"[Notice] {string.Join(" | ", userList)}", false));
         StateHasChanged();
     }
 }
