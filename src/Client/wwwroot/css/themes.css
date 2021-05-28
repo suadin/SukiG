@@ -1,15 +1,20 @@
-﻿:root {
-    /*light theme*/
-    --background-color: white;
-    --foreground-color: black;
-    --link-color: blue;
+﻿
+@media (prefers-color-scheme: light) {
+    :root {
+        /*light theme*/
+        --background-color: white;
+        --foreground-color: black;
+        --link-color: blue;
+    }
 }
 
-.dark-mode {
-    /*dark theme*/
-    --background-color: #2d2d2d;
-    --foreground-color: white;
-    --link-color: lightblue;
+@media (prefers-color-scheme: dark) {
+    :root {
+        /*light theme*/
+        --background-color: #2d2d2d;
+        --foreground-color: white;
+        --link-color: lightblue;
+    }
 }
 
 div, input, p, h1, h2 {
