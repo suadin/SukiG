@@ -1,9 +1,9 @@
-using SukiG.Server.Hubs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SukiG.Server.Chat;
 
 namespace SukiG.Server
 {
@@ -46,7 +46,7 @@ namespace SukiG.Server
                 endpoints.MapRazorPages();
                 endpoints.MapControllers();
                 endpoints.MapFallbackToFile("index.html");
-                endpoints.MapHub<ChatRoomHub>(ChatRoomHub.HubUrl);
+                endpoints.MapHub<ChatServerHub>(ChatServerHub.HubUrl);
             });
         }
     }

@@ -1,19 +1,20 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using SukiG.Shared.Chat;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SukiG.Server.Hubs
+namespace SukiG.Server.Chat
 {
-    public class ChatRoomHub : Hub
+    public class ChatServerHub : Hub
     {
-        public const string HubUrl = "/chatroom";
+        public const string HubUrl = "/chat";
         private static IDictionary<string, string> userList = new Dictionary<string, string>();
 
-        public async Task Broadcast(string username, string message)
+        public async Task Broadcast(ChatMessage chatMessage)
         {
-            await Clients.All.SendAsync("Broadcast", username, message);
+            await Clients.All.SendAsync(Shared.Chat.ChatClient.BROADCAST_MESSAGE, chatMessage);
         }
 
         public async Task UserList()
@@ -21,10 +22,10 @@ namespace SukiG.Server.Hubs
             await Clients.Caller.SendAsync("UserList", userList.Values);
         }
 
-        public async Task Rename(string userName)
-        {
-            userList[Context.ConnectionId] = userName;
-        }
+        //public async Task Rename(string userName)
+        //{
+        //    userList[Context.ConnectionId] = userName;
+        //}
 
         public override Task OnConnectedAsync()
         {

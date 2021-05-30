@@ -27,3 +27,11 @@
     padding-right: 5px;
     border-style: none;
 }
+
+.infoChatMessage {
+    color: cornflowerblue;
+}
+
+.errorChatMessage {
+    color: red;
+}
