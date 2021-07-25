@@ -1,7 +1,8 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 <div class="page">
     <div class="main d-flex flex-column">
         <div class="d-flex flex-row flex-gap-4" style="border-bottom-style: dashed; border-bottom-width: 4px; padding-bottom: 2px;">
+            <div>@Title</div>
             <!-- chatroom control -->
             <button title="open/close chat" class="btn btn-primary" @onclick="@ToggleChat"><span class="oi oi-chat"></span></button>
         </div>
@@ -11,6 +12,9 @@
 </div>
 
 @using SukiG.Client.Chat;
+@using System.Net.Http;
+@inject NavigationManager navigationManager;
+@inject HttpClient httpClient;
 @code {
     // init
     //protected override void OnAfterRender(bool firstRender)
@@ -25,6 +29,14 @@
     //        });
     //    }
     //}
+
+    public string Title = "suadin.de";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var titleUri = navigationManager.BaseUri.TrimEnd('/') + "/api/main/title";
+        Title = await httpClient.GetStringAsync(titleUri);
+    }
 
     // chatroom
     private ChatLayout chatLayout = new ChatLayout();

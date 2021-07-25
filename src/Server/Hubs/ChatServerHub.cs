@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SukiG.Server.Chat
+namespace SukiG.Server.Hubs
 {
     public class ChatServerHub : Hub
     {

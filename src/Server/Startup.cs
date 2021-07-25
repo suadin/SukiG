@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SukiG.Server.Chat;
+using SukiG.Server.Hubs;
 
 namespace SukiG.Server
 {
@@ -21,6 +21,9 @@ namespace SukiG.Server
             services.AddControllersWithViews();
             services.AddRazorPages();
             services.AddSignalR();
+
+            services.AddSingleton<IConfiguration>(Configuration);
+            services.AddHttpClient();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
