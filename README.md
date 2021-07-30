@@ -6,7 +6,7 @@
 4. [Features](#features)
 
 ## Introduction
-[suadin.de](https://suadin.de/) is a website based on [Blazor WebAssembly](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor) with aim to use it as sandbox to practise full-stack-developer topics outside of restricted job environment.
+[suadin.de](https://suadin.de/) is a website based on [Blazor WebAssembly](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor) with aim to use it as sandbox to practise full-stack-developer topics outside of restricted environments.
 
 ## Technologies
 * [Blazor WebAssembly](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor): project template, run .NET C# code on client, less server communication
