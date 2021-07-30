@@ -33,6 +33,28 @@
   * details behind automatism on [suadin/infrastructure](https://github.com/suadin/infrastructure)
 
 ## Features
+
+### Google Auth
+
+Source documentation [here](https://code-maze.com/google-authentication-in-blazor-webassembly-hosted-applications/):
+1. Login to your google account
+1. Goto google [credentials](https://console.cloud.google.com/apis/credentials)
+1. create credentials for `OAuth-Client-ID`, select website, enter website name, add urls [suadin.de](https://suadin.de) and www.suadin.de
+1. take `Client-ID` and `Client-Secret` and add it into configuration
+   * `Client-ID` into `appsettings.json`
+   * `Client-Secret` into `user secrets` [how to do that?](https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-5.0&tabs=windows)
+1. add google middleware:
+   ```
+   services.AddAuthentication()
+    .AddIdentityServerJwt()
+    .AddGoogle(o => 
+    {
+        o.ClientId = Configuration["Authentication:Google:ClientId"];
+        o.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
+    });
+   ```
+1. TODO: add button into ui
+
 * [Chatroom](https://docs.microsoft.com/de-de/azure/azure-signalr/signalr-tutorial-build-blazor-server-chat-app) to chat with other website visitors
   * [Auto-Identity](?): allows guests to chat without set a name or explicite join | :warning: **still not implemented**
 * [Dark Mode](https://www.reddit.com/r/dotnet/comments/k9ryyw/blazor_webassembly_dark_mode_css_variables/) to be able to switch between dark and light mode
