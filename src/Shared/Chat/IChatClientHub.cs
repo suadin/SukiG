@@ -4,6 +4,8 @@ namespace SukiG.Shared.Chat
 {
     public interface IChatClientHub
     {
+        string UserName { get; }
+
         Task Login(ChatHubConfig config);
 
         Task Logout();

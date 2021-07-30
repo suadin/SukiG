@@ -7,7 +7,14 @@ namespace SukiG.Client.Chat
 {
     public class ChatClientHub : IChatClientHub
     {
+        public string UserName { get; set; }
+
         public HubConnection HubConnection { get; private set; }
+
+        public ChatClientHub(string userName)
+        {
+            this.UserName = userName;
+        }
 
         public async Task Login(ChatHubConfig config)
         {

@@ -21,12 +21,19 @@
 @inject IJSRuntime jsRuntime;
 @code {
 
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthState { get; set; }
+
+    string userName;
+
     // init chat
     private ChatClient chat;
     private string hubUri { get { return navigationManager.BaseUri.TrimEnd('/') + "/chat"; } }
     protected override async Task OnInitializedAsync()
     {
-        var hub = new ChatClientHub();
+        var authState = await AuthState;
+        userName = authState.User.Identity.Name;
+        var hub = new ChatClientHub(userName);
         var handler = new ChatMessageHandler(hub, new ChatFunc[] { new TicTacToeChatCommandFunc() });
         var printer = this;
         chat = new ChatClient(hub, handler, printer);
@@ -44,7 +51,7 @@
 
     // handle input
     private string newMessage;
-    private async Task EnterAsync(KeyboardEventArgs e) => await chat.HandleChatMessage(new ChatMessage(chat.ChatUserName, newMessage, e.Code));
+    private async Task EnterAsync(KeyboardEventArgs e) => await chat.HandleChatMessage(new ChatMessage(userName, newMessage, e.Code));
 
     // print chat messages
     private List<FormatedChatMessage> formatedChatMessages = new List<FormatedChatMessage>();

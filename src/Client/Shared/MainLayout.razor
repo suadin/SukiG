@@ -1,13 +1,23 @@
+@using System.Security.Claims
 @inherits LayoutComponentBase
 <div class="page">
     <div class="main d-flex flex-column">
         <div class="d-flex flex-row flex-gap-4" style="border-bottom-style: dashed; border-bottom-width: 4px; padding-bottom: 2px;">
             <div>@Title</div>
+            <LoginDisplay />
             <!-- chatroom control -->
-            <button title="open/close chat" class="btn btn-primary" @onclick="@ToggleChat"><span class="oi oi-chat"></span></button>
+            <AuthorizeView>
+                <Authorized>
+                    <button title="open/close chat" class="btn btn-primary" @onclick="@ToggleChat"><span class="oi oi-chat"></span></button>
+                </Authorized>
+            </AuthorizeView>
         </div>
         <div class="content p-2 flex-fill">@Body</div>
-        <ChatLayout @ref="chatLayout"></ChatLayout>
+        <AuthorizeView>
+            <Authorized>
+                <ChatLayout @ref="chatLayout"></ChatLayout>
+            </Authorized>
+        </AuthorizeView>
     </div>
 </div>
 

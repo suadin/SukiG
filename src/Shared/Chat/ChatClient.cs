@@ -16,8 +16,6 @@ namespace SukiG.Shared.Chat
         private readonly IChatMessageHandler handler;
         private readonly IChatMessagePrinter printer;
 
-        public string ChatUserName { get; set; }
-
         public ChatClient(IChatClientHub hub, IChatMessageHandler handler, IChatMessagePrinter printer)
         {
             this.hub = hub;
@@ -29,10 +27,9 @@ namespace SukiG.Shared.Chat
         {
             try
             {
-                this.ChatUserName = $"Guest-{new Random().Next(100000, 999999)}";
-                var config = new ChatHubConfig(hubUri, this.ChatUserName, BroadcastMessage, UserListMessage);
+                var config = new ChatHubConfig(hubUri, this.hub.UserName, BroadcastMessage, UserListMessage);
                 await this.hub.Login(config);
-                var infoMessage = new ChatMessage(INFO_USER, $"User '{this.ChatUserName}' joins the chat", "Enter");
+                var infoMessage = new ChatMessage(INFO_USER, $"User '{this.hub.UserName}' joins the chat", "Enter");
                 await this.hub.Send<ChatMessage>(BROADCAST_MESSAGE, infoMessage);
             }
             catch (Exception ex)
@@ -65,7 +62,7 @@ namespace SukiG.Shared.Chat
         {
             try
             {
-                var infoMessage = new ChatMessage(INFO_USER, $"User '{this.ChatUserName}' lefts the chat", "Enter");
+                var infoMessage = new ChatMessage(INFO_USER, $"User '{this.hub.UserName}' lefts the chat", "Enter");
                 await this.hub.Send<ChatMessage>(BROADCAST_MESSAGE, infoMessage);
                 await this.hub.Logout();
             }

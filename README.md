@@ -25,6 +25,7 @@
 * run this website
   * clone project
   * open visual studio
+  * dotnet user-secrets set "Authentication:Google:ClientSecret" "client_secret"
   * run as docker
   * expect browser opens with website
 * build & deploy
@@ -36,24 +37,41 @@
 
 ### Google Auth
 
-Source documentation [here](https://code-maze.com/google-authentication-in-blazor-webassembly-hosted-applications/):
+Source documentation [server](https://code-maze.com/google-authentication-in-blazor-webassembly-hosted-applications/), [client](https://www.learmoreseekmore.com/2021/04/part3-steps-for-implementing-google-authentication-into-existing-blazor-webassembly-standalone-application.html), [client usage](https://code-maze.com/authenticationstateprovider-blazor-webassembly/):
 1. Login to your google account
 1. Goto google [credentials](https://console.cloud.google.com/apis/credentials)
-1. create credentials for `OAuth-Client-ID`, select website, enter website name, add urls [suadin.de](https://suadin.de) and www.suadin.de
-1. take `Client-ID` and `Client-Secret` and add it into configuration
-   * `Client-ID` into `appsettings.json`
-   * `Client-Secret` into `user secrets` [how to do that?](https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-5.0&tabs=windows)
-1. add google middleware:
+1. create credentials for `OAuth-Client-ID`
+   1. select website
+   1. enter website name
+   1. add website url https://suadin.de
+   1. add callback url https://suadin.de/authentication/login-callback
+1. take `Client-ID` and `Client-Secret`
+   * add `Client-ID` into `appsettings.json` on client and server
+   * add `Client-Secret` into `user secrets` [how to do that?](https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-5.0&tabs=windows)
+1. add google middleware on server
+1. add oidc middleware with config on client
+1. do [client setup](https://www.learmoreseekmore.com/2021/04/part3-steps-for-implementing-google-authentication-into-existing-blazor-webassembly-standalone-application.html) for login/logout
+1. display user name with
+   * HTML: @context.User.Identity.Name
+   * C#:
    ```
-   services.AddAuthentication()
-    .AddIdentityServerJwt()
-    .AddGoogle(o => 
-    {
-        o.ClientId = Configuration["Authentication:Google:ClientId"];
-        o.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
-    });
+   [CascadingParameter]
+   public Task<AuthenticationState> AuthState { get; set; }
+   ...
+   var authState = await AuthState;
+   userName = authState.User.Identity.Name;
    ```
-1. TODO: add button into ui
+1. show/hide html sections with
+   ```
+    <AuthorizeView>
+        <Authorized>
+            <p>only visible for authenticated user</p>
+        </Authorized>
+        <NotAuthorized>
+            <p>only visible for anonymous user</p>
+        </NotAuthorized>
+    </AuthorizeView>
+   ```
 
 * [Chatroom](https://docs.microsoft.com/de-de/azure/azure-signalr/signalr-tutorial-build-blazor-server-chat-app) to chat with other website visitors
   * [Auto-Identity](?): allows guests to chat without set a name or explicite join | :warning: **still not implemented**

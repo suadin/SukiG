@@ -24,6 +24,13 @@ namespace SukiG.Server
 
             services.AddSingleton<IConfiguration>(Configuration);
             services.AddHttpClient();
+
+            services.AddAuthentication()
+                .AddGoogle(o =>
+                {
+                    o.ClientId = Configuration["Authentication:Google:ClientId"];
+                    o.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
+                });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
