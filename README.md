@@ -47,7 +47,8 @@ Source documentation [server](https://code-maze.com/google-authentication-in-bla
    1. add callback url https://suadin.de/authentication/login-callback
 1. take `Client-ID` and `Client-Secret`
    * add `Client-ID` into `appsettings.json` on client and server
-   * add `Client-Secret` into `user secrets` [how to do that?](https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-5.0&tabs=windows)
+   * add `Client-Secret` into `user secrets` (local) [how to?](https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-5.0&tabs=windows)
+   * add `Client-Secret` into `docker environment varibales` (server) [hot to?](https://github.com/suadin/infrastructure/blob/main/README.md#deployment)
 1. add google middleware on server
 1. add oidc middleware with config on client
 1. do [client setup](https://www.learmoreseekmore.com/2021/04/part3-steps-for-implementing-google-authentication-into-existing-blazor-webassembly-standalone-application.html) for login/logout
