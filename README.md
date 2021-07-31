@@ -2,7 +2,7 @@
 
 1. [Introduction](#introduction) 
 2. [Technologies](#technologies)
-3. [Setup](#setup)
+3. [Development](#development)
 4. [Features](#features)
 
 ## Introduction
@@ -13,7 +13,7 @@
 * [SignalR](https://docs.microsoft.com/en-us/aspnet/signalr/overview/getting-started/introduction-to-signalr): bidirectional communication between client and server
 * [Bootstrap](https://getbootstrap.com/): responsive design
 
-## Setup
+## Development
 * `choco install visualstudio2019community`
   * ensure .NET 5 is installed
   * ensure ASP.NET and .NET core features are enabled
@@ -26,7 +26,7 @@
   * clone project
   * open visual studio
   * dotnet user-secrets set "Authentication:Google:ClientSecret" "client_secret"
-  * run as docker
+  * run as docker (see [container start properties](https://docs.microsoft.com/de-de/visualstudio/containers/container-launch-settings?view=vs-2019))
   * expect browser opens with website
 * build & deploy
   * push changes on main branch
