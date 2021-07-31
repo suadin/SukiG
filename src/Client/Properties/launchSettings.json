@@ -3,7 +3,7 @@
     "SukiG.Client": {
       "commandName": "Project",
       "launchBrowser": true,
-      "applicationUrl": "https://localhost:49173"
+      "applicationUrl": "https://localhost:8443"
     }
   }
 }

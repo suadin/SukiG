@@ -4,8 +4,15 @@
       "commandName": "Docker",
       "launchBrowser": true,
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
-      "publishAllPorts": true,
-      "useSSL": true
+      "useSSL": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "https://+:443;http://+:80",
+        "ASPNETCORE_HTTPS_PORT": "8443",
+        "Authentication:Google:ClientId": "1022585525007-pd3p630pl8v4vk0ngb5p91rdel9lpp6j.apps.googleusercontent.com"
+      },
+      "httpPort": 8080,
+      "sslPort": 8443
     }
   }
 }

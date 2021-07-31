@@ -3,18 +3,19 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using SukiG.Server.Hubs;
 
 namespace SukiG.Server
 {
     public class Startup
     {
+        private readonly IConfiguration configuration;
+
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            this.configuration = configuration;
         }
-
-        public IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -22,23 +23,26 @@ namespace SukiG.Server
             services.AddRazorPages();
             services.AddSignalR();
 
-            services.AddSingleton<IConfiguration>(Configuration);
+            services.AddSingleton<IConfiguration>(configuration);
             services.AddHttpClient();
 
             services.AddAuthentication()
                 .AddGoogle(o =>
                 {
-                    o.ClientId = Configuration["Authentication:Google:ClientId"];
-                    o.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
+                    o.ClientId = configuration["Authentication:Google:ClientId"];
+                    o.ClientSecret = configuration["Authentication:Google:ClientSecret"];
                 });
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseWebAssemblyDebugging();
+
+                logger.LogInformation($"ClientId={configuration["Authentication:Google:ClientId"]}");
+                logger.LogInformation($"ClientSecret={configuration["Authentication:Google:ClientSecret"]}");
             }
             else
             {
