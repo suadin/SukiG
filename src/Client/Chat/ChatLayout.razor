@@ -1,4 +1,4 @@
-﻿@if (!isClosed)
+﻿@if (!IsClosed)
 {
     <div class="chatroom-component d-flex flex-column flex-gap-6 align-items-stretch">
         <div class="chatroom-messages d-flex flex-column align-items-start p-2 flex-fill">
@@ -89,14 +89,15 @@
     }
 
     // open and close chat
-    private bool isClosed = false;
+    public bool IsClosed = true;
     public async Task ToggleChat()
     {
-        isClosed = !isClosed;
-        if (isClosed)
+        IsClosed = !IsClosed;
+        if (IsClosed)
             await chat.Logout();
         else
             await chat.Login(hubUri);
+        formatedChatMessages = new List<FormatedChatMessage>();
         StateHasChanged();
     }
 

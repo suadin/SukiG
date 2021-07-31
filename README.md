@@ -13,6 +13,7 @@ This repository contains the website https://suadin.de/ which based on [Blazor W
 * [Blazor WebAssembly](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor): project template, run .NET C# code on client, less server communication
 * [SignalR](https://docs.microsoft.com/en-us/aspnet/signalr/overview/getting-started/introduction-to-signalr): bidirectional communication between client and server
 * [Bootstrap](https://getbootstrap.com/): responsive design
+* [Open Iconic](https://useiconic.com/open): icon set
 
 # Development
 * `choco install visualstudio2019community`, ensure .NET 5 is installed, ensure ASP.NET and .NET core features are enabled

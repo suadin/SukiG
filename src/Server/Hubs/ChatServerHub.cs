@@ -14,7 +14,7 @@ namespace SukiG.Server.Hubs
 
         public async Task Broadcast(ChatMessage chatMessage)
         {
-            await Clients.All.SendAsync(Shared.Chat.ChatClient.BROADCAST_MESSAGE, chatMessage);
+            await Clients.Others.SendAsync(Shared.Chat.ChatClient.BROADCAST_MESSAGE, chatMessage);
         }
 
         public async Task UserList()

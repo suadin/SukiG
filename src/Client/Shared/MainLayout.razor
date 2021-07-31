@@ -3,12 +3,18 @@
 <div class="page">
     <div class="main d-flex flex-column">
         <div class="d-flex flex-row flex-gap-4" style="border-bottom-style: dashed; border-bottom-width: 4px; padding-bottom: 2px;">
-            <div>@Title</div>
             <LoginDisplay />
             <!-- chatroom control -->
             <AuthorizeView>
                 <Authorized>
-                    <button title="open/close chat" class="btn btn-primary" @onclick="@ToggleChat"><span class="oi oi-chat"></span></button>
+                    @if (chatLayout.IsClosed)
+                    {
+                        <button title="open chat" class="btn btn-primary" @onclick="@ToggleChat"><span class="oi oi-chat"></span></button>
+                    }
+                    else
+                    {
+                        <button title="close chat" class="btn btn-danger" @onclick="@ToggleChat"><span class="oi oi-chat"></span></button>
+                    }
                 </Authorized>
             </AuthorizeView>
         </div>
@@ -18,6 +24,9 @@
                 <ChatLayout @ref="chatLayout"></ChatLayout>
             </Authorized>
         </AuthorizeView>
+        <div class="d-flex flex-row flex-gap-4" style="border-top-style: dashed; border-top-width: 4px; padding-top: 2px;">
+            <span>@Title</span>
+        </div>
     </div>
 </div>
 

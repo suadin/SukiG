@@ -1,5 +1,12 @@
 ﻿@page "/"
 
-<h1>Hello Guest!</h1>
+<AuthorizeView>
+    <NotAuthorized>
+        <h1>Hello Guest!</h1>
+    </NotAuthorized>
+    <Authorized>
+        <h1>Hello @context.User.Identity.Name!</h1>
+    </Authorized>
+</AuthorizeView>
 
 <p>Welcome to <a href="https://suadin.de/">suadin.de</a>. This website is currently a sandbox for suadin, you can find and support suadin over <a href="https://github.com/suadin">github</a>. Have fun to explore :-).</p>

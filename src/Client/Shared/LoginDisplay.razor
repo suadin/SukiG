@@ -6,16 +6,20 @@
 
 <AuthorizeView>
     <Authorized>
-        Hello, @context.User.Identity.Name!
-        <button class="nav-link btn btn-link" @onclick="BeginSignOut">Log out</button>
+        <button title="logout" class="btn btn-danger" @onclick="SignOut"><span class="oi oi-account-logout"></span></button>
     </Authorized>
     <NotAuthorized>
-        <a href="authentication/login">Log in</a>
+        <button title="login" class="btn btn-primary" @onclick="SignIn"><span class="oi oi-account-login"></span></button>
     </NotAuthorized>
 </AuthorizeView>
 
 @code{
-    private async Task BeginSignOut(MouseEventArgs args)
+    private async Task SignIn(MouseEventArgs args)
+    {
+        Navigation.NavigateTo($"authentication/login");
+    }
+
+    private async Task SignOut(MouseEventArgs args)
     {
         await SignOutManager.SetSignOutState();
         Navigation.NavigateTo($"authentication/logout");
