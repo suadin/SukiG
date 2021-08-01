@@ -18,9 +18,13 @@ This repository contains the website https://suadin.de/ which based on [Blazor W
 # Development
 * `choco install visualstudio2019community`, ensure .NET 5 is installed, ensure ASP.NET and .NET core features are enabled
 * `choco install docker-for-windows`, ensure virtualization (in bios) is enabled, ensure `docker run -d -p 80:80 docker/getting-started` works, run docker
+* `choco install postgresql`, `choco install pgadmin4`, run pgadmin4, enter password, execute commands:
+  * `create database suadin;`, `CREATE USER suadin WITH PASSWORD 'jw8s0F4';`, `GRANT CREATE ON DATABASE suadin TO suadin`
+  * `dotnet tool install --global dotnet-ef` [[source](https://docs.microsoft.com/de-de/ef/core/cli/dotnet)]
 * `choco install gitkraken` (optional), good tree-overview and diff-tool
 * run website: clone project, open visual studio, add credentials
   * `dotnet user-secrets set "Authentication:Google:ClientSecret" "client_secret"`
+  * `dotnet user-secrets set "ConnectionStrings:DefaultConnectionPassword" "jw8s0F4"`
 * run as docker, start of container is already configured [[source](https://docs.microsoft.com/de-de/visualstudio/containers/container-launch-settings?view=vs-2019)]
 * expect browser opens https://localhost:8443/
 * build & deploy: push changes on main branch and expect https://suadin.de/ gets changes [[details](https://github.com/suadin/infrastructure)]
