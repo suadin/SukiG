@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SukiG.Server.Database;
 using System;
@@ -14,7 +13,7 @@ namespace SukiG.Server
         {
             using var scope = builder.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
             using var context = scope.ServiceProvider.GetRequiredService<DefaultDbContext>();
-            context.Database.EnsureCreated();
+            context.Database.Migrate();
         }
     }
 }

@@ -55,6 +55,7 @@ namespace SukiG.Server
                 app.UseHsts();
             }
 
+            logger.LogInformation($"Database migration...");
             app.Migrate();
             app.UseHttpsRedirection();
             app.UseBlazorFrameworkFiles();

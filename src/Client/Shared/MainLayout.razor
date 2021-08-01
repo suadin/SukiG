@@ -61,11 +61,12 @@
         if (authState.User.Identity.IsAuthenticated)
         {
             var userUri = navigationManager.BaseUri.TrimEnd('/') + "/api/user";
-            var user = await httpClient.GetStringAsync($"{userUri}?name={authState.User.Identity.Name}");
+            var username = authState.User.Identity.Name;
+            var user = await httpClient.GetFromJsonAsync<User>($"{userUri}?name={username}");
 
-            if (user == null)
+            if (user.Id == 0)
             {
-                var response = await httpClient.PostAsJsonAsync(userUri, new User { Name = authState.User.Identity.Name });
+                var response = await httpClient.PostAsJsonAsync<User>(userUri, new User { Id = 0, Name = authState.User.Identity.Name } );
                 if (!response.IsSuccessStatusCode)
                     throw new Exception("Error occues while save new user into database.");
             }
