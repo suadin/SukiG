@@ -30,6 +30,7 @@
     </div>
 </div>
 
+@using SukiG.Shared.Model;
 @using SukiG.Client.Chat;
 @using System.Net.Http;
 @inject NavigationManager navigationManager;
@@ -49,10 +50,27 @@
     //    }
     //}
 
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthState { get; set; }
+
     public string Title = "suadin.de";
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthState;
+        if (authState.User.Identity.IsAuthenticated)
+        {
+            var userUri = navigationManager.BaseUri.TrimEnd('/') + "/api/user";
+            var user = await httpClient.GetStringAsync($"{userUri}?name={authState.User.Identity.Name}");
+
+            if (user == null)
+            {
+                var response = await httpClient.PostAsJsonAsync(userUri, new User { Name = authState.User.Identity.Name });
+                if (!response.IsSuccessStatusCode)
+                    throw new Exception("Error occues while save new user into database.");
+            }
+        }
+
         var titleUri = navigationManager.BaseUri.TrimEnd('/') + "/api/main/title";
         Title = await httpClient.GetStringAsync(titleUri);
     }

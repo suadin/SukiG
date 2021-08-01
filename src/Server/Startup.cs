@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using SukiG.Server.Database;
 using SukiG.Server.Hubs;
 
 namespace SukiG.Server
@@ -25,6 +27,9 @@ namespace SukiG.Server
 
             services.AddSingleton<IConfiguration>(configuration);
             services.AddHttpClient();
+
+            services.AddDbContext<DefaultDbContext>(options =>
+                options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
             services.AddAuthentication()
                 .AddGoogle(o =>
@@ -50,6 +55,7 @@ namespace SukiG.Server
                 app.UseHsts();
             }
 
+            app.Migrate();
             app.UseHttpsRedirection();
             app.UseBlazorFrameworkFiles();
             app.UseStaticFiles();
