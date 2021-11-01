@@ -75,4 +75,5 @@ jobs:
             cd ~
             docker stop suadin.de
             docker rm suadin.de
+            docker pull 4324324324324324324/suadin.de:main
             ./deploy.sh
